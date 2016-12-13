@@ -20,7 +20,7 @@ public class SpalasActivity extends Activity {
          tvname.setText("版本名："+getVersionName());
     }
     /**
-     * 获取版本名称哈哈
+     * 获取版本名称哈哈哈哈哈
      */
     private String getVersionName(){
         PackageManager pm = getPackageManager();//包管理器
