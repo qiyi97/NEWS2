@@ -3,7 +3,7 @@
     android:id="@+id/activity_spalas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/start">
+    android:background="@drawable/start1">
 
     <TextView
         android:id="@+id/tv_Splash_versionname"
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:textSize="20dp"
+        android:textSize="10dp"
          />
 
     <ProgressBar

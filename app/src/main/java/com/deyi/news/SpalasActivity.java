@@ -2,11 +2,14 @@ package com.deyi.news;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -28,15 +31,15 @@ public class SpalasActivity extends Activity {
     public int VersonCode;
     private String des;
     private String VersionName;
-    public static final int MSG_UPDATE_DIALOG =1 ;
-    private Handler handler = new Handler(){
+    public static final int MSG_UPDATE_DIALOG = 1;
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case MSG_UPDATE_DIALOG:
                     //弹出对话框
                     showdialog();
-                break;
+                    break;
             }
         }
 
@@ -45,6 +48,7 @@ public class SpalasActivity extends Activity {
          *
          */
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +59,47 @@ public class SpalasActivity extends Activity {
         tv_Splash_versionname.setText("版本名：" + getVersionName());
         update();
     }
+
+    //弹出对话
     private void showdialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+                .setCancelable(false)
+                .setMessage(des)
+                .setTitle("新版本" + VersionName)
+                .setIcon(R.drawable.update)
+                .setCancelable(true)
+                .setPositiveButton("升级", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //下载最新版本
+                        download();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        enterHome();
+                    }
+                })
+                //显示对话框
+                .show();
+    }
+
+    /**
+     * 3.下载最新版本
+     *
+     */
+    private void download() {
+
+    }
+
+    //跳转主界面
+    private void enterHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        //移除splash界面
+        finish();
     }
 
     /**
@@ -65,14 +108,15 @@ public class SpalasActivity extends Activity {
     private void update() {
         //链接服务器，查看是否有最新操作，联网操作，好耗时操作，4.0以后不予许在主线程中执行，要放到子线程
         new Thread() {
+            public int startTime;
 
             @Override
             public void run() {
                 Message message = new Message();
-                //1.1连接服务器
-                //1.1.1设置链接
-                //spec：设置链接路径
+                //在连接之前获取一个时间
+                startTime = (int) System.currentTimeMillis();
                 try {
+
                     URL url = new URL("http://192.168.1.139/update.json");
                     //1.1.2获取链接操作
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();//Http协议，httpClient
@@ -102,13 +146,13 @@ public class SpalasActivity extends Activity {
                         VersonCode = jsonObject.getInt("versonCode");
                         des = jsonObject.getString("des");
                         apkurl = jsonObject.getString("apkurl");
-                        Log.v("TAG","versonName:"+VersionName+"\n"+"versonCode:"+VersonCode+"\n"+"des:"+des+"\n"+"apkurl:"+apkurl);
+                        Log.v("TAG", "versonName:" + VersionName + "\n" + "versonCode:" + VersonCode + "\n" + "des:" + des + "\n" + "apkurl:" + apkurl);
                         //判断服务器返回的新版本版本号和当前应用程序的版本是否一致，一致表示没有最新版本，不一致就表示有最新版本
-                        if (VersionName.equals(getVersionName())){
+                        if (VersionName.equals(getVersionName())) {
                             //没有最新版本
-                            Log.v("TAG","当前已是最新版本，无需更新");
+                            Log.v("TAG", "当前已是最新版本，无需更新");
 
-                        }else {
+                        } else {
                             //有最新版本
                             //2.弹出对话框，提醒用户更新版本
                             message.what = MSG_UPDATE_DIALOG;
@@ -123,7 +167,16 @@ public class SpalasActivity extends Activity {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }finally {//不管有没有异常都会执行
+                } finally {//不管有没有异常都会执行
+                    //在连接成功之后再去获取一个时间
+                    //处理连接外网连接时间问题
+                    int endTime = (int) System.currentTimeMillis();
+                    int dTime = endTime - startTime;
+                    if (dTime < 2000) {
+                        //比较两个的时间差如果小于两秒就睡两秒，大于两秒不睡
+                        //睡两秒钟
+                        SystemClock.sleep(2000 - dTime);//始终都是睡两秒钟的时间
+                    }
                     handler.sendMessage(message);
                 }
             }
