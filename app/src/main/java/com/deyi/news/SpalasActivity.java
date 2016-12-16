@@ -12,10 +12,10 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -86,15 +86,17 @@ public class SpalasActivity extends Activity {
                 .show();
     }
 
-    /**
-     * 3.下载最新版本
-     *
-     */
     private void download() {
-
+        HttpUtils
     }
 
-    //跳转主界面
+    /**
+     * 3.下载最新版本wasdwasdwasdwasdwasdwasdwasdwasdwasdwasdwad
+     *
+     */
+
+
+        //跳转主界面
     private void enterHome() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
