@@ -7,19 +7,25 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import deyi.news.utils.StreamUtil;
+
 
 public class SpalasActivity extends Activity {
 
@@ -83,15 +89,14 @@ public class SpalasActivity extends Activity {
                 .show();
     }
 
-    private void download() {
-
-    }
-
     /**
      * 3.下载最新版本wasdwasdwasdwasdwasdwasdwasdwasdwasdwasdwad
      *
      */
 
+    private void download(View v) {
+
+    }
 
         //跳转主界面
     private void enterHome() {
