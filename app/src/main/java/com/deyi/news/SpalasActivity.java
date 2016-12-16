@@ -14,14 +14,11 @@ import android.util.Log;
 import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import deyi.news.utils.StreamUtil;
 
 public class SpalasActivity extends Activity {
@@ -87,7 +84,7 @@ public class SpalasActivity extends Activity {
     }
 
     private void download() {
-        HttpUtils
+
     }
 
     /**
