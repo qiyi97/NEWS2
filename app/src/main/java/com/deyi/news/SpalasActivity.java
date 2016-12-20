@@ -1,32 +1,35 @@
 package com.deyi.news;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.File;
+import org.xutils.x;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import deyi.news.utils.StreamUtil;
+
+
 
 
 public class SpalasActivity extends Activity {
@@ -58,16 +61,19 @@ public class SpalasActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        x.Ext.setDebug(true);//是否输出debug日志开启debug会影响性能
+        
         setContentView(R.layout.activity_spalas);
         getVersionName();
         tv_Splash_versionname = (TextView) findViewById(R.id.tv_Splash_versionname);
         tv_Splash_versionname.setText("版本名：" + getVersionName());
         tv_Splash_plan = (TextView) findViewById(R.id.tv_Splash_plan);
-
         update();
     }
 
     //弹出对话
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showdialog() {
         new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
                 .setCancelable(false)
@@ -93,7 +99,12 @@ public class SpalasActivity extends Activity {
                 .show();
     }
 
+    private void downloadw() {
+
+    }
+
     private void download() {
+
         //判断SD卡是否存在
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             /**
@@ -101,37 +112,7 @@ public class SpalasActivity extends Activity {
              * url：新版本下载路径
              * target：保存新版本的 目录
              * callback
-             */
-            HttpUtils httpUtils = new HttpUtils();
-            httpUtils.download(apkurl, "/mnt/sdcard/app-release.apk", new RequestCallBack<File>() {
-                @Override
-                //onsuccess 成功时候调用
-                public void onSuccess(ResponseInfo<File> responseInfo) {
-
-                }
-                @Override
-                //onfailure 失败时调用
-                public void onFailure(HttpException e, String s) {
-
-                }
-
-                @Override
-                /**
-                 * onLoading 显示当前下载进度操作
-                 * total ：下载总进度
-                 * current：当前下载进度
-                 * isuploading ：是否支持断点续传
-                 */
-                public void onLoading(long total, long current, boolean isUploading) {
-                    super.onLoading(total, current, true);
-                    //设置下载进度的textview可见，同时设置相应的下载进度
-                    tv_Splash_plan.setVisibility(View.VISIBLE);//设置控件是否可见
-                    tv_Splash_plan.setText(current+"/"+total);//  44/100
-                }
-            });
-            /**
-             *
-             */
+         */
         }else {
             Toast.makeText(this,"SD卡不存在",Toast.LENGTH_LONG);
         }
