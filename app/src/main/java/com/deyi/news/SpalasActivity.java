@@ -14,26 +14,30 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import deyi.news.utils.StreamUtil;
 
 
 public class SpalasActivity extends Activity {
 
+    private TextView tv_Splash_plan;
     private TextView tv_Splash_versionname;
     private String apkurl;
     public int VersonCode;
     private String des;
     private String VersionName;
+
     public static final int MSG_UPDATE_DIALOG = 1;
     private Handler handler = new Handler() {
         @Override
@@ -51,15 +55,15 @@ public class SpalasActivity extends Activity {
          *
          */
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spalas);
         getVersionName();
-
         tv_Splash_versionname = (TextView) findViewById(R.id.tv_Splash_versionname);
         tv_Splash_versionname.setText("版本名：" + getVersionName());
+        tv_Splash_plan = (TextView) findViewById(R.id.tv_Splash_plan);
+
         update();
     }
 
@@ -89,13 +93,48 @@ public class SpalasActivity extends Activity {
                 .show();
     }
 
-    /**
-     * 3.下载最新版本wasdwasdwasdwasdwasdwasdwasdwasdwasdwasdwad
-     *
-     */
+    private void download() {
+        //判断SD卡是否存在
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            /**
+             * download（url，target，callback）
+             * url：新版本下载路径
+             * target：保存新版本的 目录
+             * callback
+             */
+            HttpUtils httpUtils = new HttpUtils();
+            httpUtils.download(apkurl, "/mnt/sdcard/app-release.apk", new RequestCallBack<File>() {
+                @Override
+                //onsuccess 成功时候调用
+                public void onSuccess(ResponseInfo<File> responseInfo) {
 
-    private void download(View v) {
+                }
+                @Override
+                //onfailure 失败时调用
+                public void onFailure(HttpException e, String s) {
 
+                }
+
+                @Override
+                /**
+                 * onLoading 显示当前下载进度操作
+                 * total ：下载总进度
+                 * current：当前下载进度
+                 * isuploading ：是否支持断点续传
+                 */
+                public void onLoading(long total, long current, boolean isUploading) {
+                    super.onLoading(total, current, true);
+                    //设置下载进度的textview可见，同时设置相应的下载进度
+                    tv_Splash_plan.setVisibility(View.VISIBLE);//设置控件是否可见
+                    tv_Splash_plan.setText(current+"/"+total);//  44/100
+                }
+            });
+            /**
+             *
+             */
+        }else {
+            Toast.makeText(this,"SD卡不存在",Toast.LENGTH_LONG);
+        }
     }
 
         //跳转主界面
